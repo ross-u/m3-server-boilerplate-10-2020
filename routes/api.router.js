@@ -28,9 +28,10 @@ router.get('/travelPost/:postId', isLoggedIn, (req, res, next) => {
             res
                 .status(200) //okay 
                 .json(foundPost)
-        }).catch((err) => {
+        })
+        .catch((err) => {
             res
-                .status(500)//stands for an internal server error
+                .status(400)//stands for bad request
                 .json(err) //sends error to json
         });
 });
@@ -48,12 +49,32 @@ router.post('/travelPost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
             res
                 .status(200) //okay 
                 .json(updatedUser)
-        }).catch((err) => {
+        })
+        .catch((err) => {
             res
-                .status(500)//stands for an internal server error
+                .status(404)//stands for not found
                 .json(err) //sends error to json
         });
 });
+
+
+// GET '/api/profile/:userId'
+
+router.get('/profile/:userId', isLoggedIn, (req, res, next) => {
+    const { userId } = req.params;
+    console.log('user', req.params);
+    User.findById(userId)
+        .then((foundUser) => {
+            res
+                .status(200) //okay
+                .json(foundUser)
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+})
 
 
 
