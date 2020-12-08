@@ -6,10 +6,11 @@ const postSchema = new Schema(
         title: { type: String, required: true },
         country: { type: String, required: true },
         city: { type: String, required: true },
-        description: { type: String, required: true },
+        description: { type: String, required: true, maxlength: 600 },
         image: { type: String, default: 'https://www.irantravelingcenter.com/wp-content/plugins/all-in-one-video-gallery/public/assets/images/placeholder-image.png' },
         postAuthor: { type: Schema.Types.ObjectId, ref: "User" },
-        comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }]
+        comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+        rating: { type: Number }
     },
     {
         timestamps: {
