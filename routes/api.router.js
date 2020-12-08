@@ -43,7 +43,8 @@ router.post('/travelPost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
     User
         .findByIdAndUpdate(
             userId,
-            { favorites: postId }
+            { favorites: postId },
+            { new: true }
         )
         .then((updatedUser) => {
             res
@@ -76,6 +77,34 @@ router.get('/profile/:userId', isLoggedIn, (req, res, next) => {
         });
 })
 
+// PUT '/api/editProfile/:userId'
+
+router.put('/editProfile/:userId', isLoggedIn, (req, res, next) => {
+    const { userId } = req.params;
+    const { name, username, nationality, myFavoriteTrip, description, image } = req.body;
+    User.findByIdAndUpdate(
+        userId,
+        {
+            name,
+            username,
+            nationality,
+            myFavoriteTrip,
+            description,
+            image
+        },
+        { new: true }
+    )
+        .then((updatedUser) => {
+            res
+                .status(200) //okay
+                .json(updatedUser)
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+})
 
 
 module.exports = router;
