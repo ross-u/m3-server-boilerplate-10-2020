@@ -37,8 +37,9 @@ mongoose
     .then(() => {
         // 2.  CREATE THE DOCUMENTS FROM ARRAY OF USERS
         const pr = User.create(users);
-        // const salt = bcrypt.genSaltSync(saltRounds);
-        // userCharity.password = bcrypt.hashSync(userCharity.password, salt);
+
+
+
         return pr;
     })
     .then((createdUsers) => {
@@ -52,7 +53,8 @@ mongoose
             const user = createdUsers[i];
             const userId = user._id;
             post.postAuthor = [userId];
-
+            // const salt = bcrypt.genSaltSync(saltRounds);
+            // user.password = bcrypt.hashSync(user.password, salt);
 
             return post; // return the updated userCharity
         });
