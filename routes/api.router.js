@@ -12,9 +12,19 @@ const {
 
 // GET '/api/dashboard'
 
-// router.get('/dashboard', isLoggedIn, (req, res, next) => {
-
-// })
+router.get('/dashboard', isLoggedIn, (req, res, next) => {
+    Post.find()
+        .then((foundPosts) => {
+            res
+                .status(200) //okay 
+                .json(foundPosts)
+        })
+        .catch((err) => {
+            res
+                .status(400)//stands for bad request
+                .json(err) //sends error to json
+        });
+})
 
 
 // GET '/api/travelPost/:postId'
@@ -104,6 +114,70 @@ router.put('/editProfile/:userId', isLoggedIn, (req, res, next) => {
                 .status(404)//stands for not found
                 .json(err) //sends error to json
         });
+})
+
+
+// DELETE '/api/deleteProfileConfirmation/:userId'
+router.delete('/deleteProfileConfirmation/:userId', isLoggedIn, (req, res, next) => {
+    const { userId } = req.params;
+    User.findByIdAndDelete(userId)
+        .then(() => {
+            res
+                .status(200) //okay
+                .send(`User ${userId} was removed successfully.`);
+
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+})
+
+// GET '/api/myPosts/:userId'
+
+router.get('/myPosts/:userId', isLoggedIn, (req, res, next) => {
+    const { userId } = req.params;
+    User
+        .findById(userId)
+        .populate('myPosts')
+        .then((foundUser) => {
+            res
+                .status(200) //okay 
+                .json(foundUser.myPosts)
+        }).catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+})
+
+// POST '/api/createPost'
+
+router.post('/createPost', isLoggedIn, (req, res, next) => {
+
+    const { title, country, city, image, description, postAuthor } = req.body;
+    const currentUserId = req.session.currentUser._id;
+    // console.log('currentUser', currentUsername);
+    Post.create({ title, country, city, image, description, postAuthor: currentUserId })
+        .then((createdPost) => {
+            User.findByIdAndUpdate(
+                currentUserId,
+                { $push: { myPosts: createdPost } }, { new: true }
+            )
+                .then(() => {
+                    res
+                        .status(201) //okay 
+                        .send(`Post ${createdPost} was created successfully.`);
+                })
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+
+
 })
 
 

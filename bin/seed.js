@@ -36,13 +36,20 @@ mongoose
     })
     .then(() => {
         // 2.  CREATE THE DOCUMENTS FROM ARRAY OF USERS
-        const pr = User.create(users);
 
+        const updatedUser = users.map((user) => {
+            const salt = bcrypt.genSaltSync(saltRounds);
+            user.password = bcrypt.hashSync(user.password, salt);
+            return user
 
+        })
 
+        const pr = User.create(updatedUser);
         return pr;
+
     })
     .then((createdUsers) => {
+
         console.log(`Created ${createdUsers.length} users`);
 
         // 3. WHEN .create() OPERATION IS DONE
@@ -58,7 +65,6 @@ mongoose
 
             return post; // return the updated userCharity
         });
-
         const pr = Post.create(updatedPost);
         return pr; // forwards the promise to next `then`
     })
@@ -77,8 +83,61 @@ mongoose
     }).then((updatedUser) => {
         console.log(`Updated ${updatedUser.length} users`);
 
+        const updatedComment = comments.map((comment, i) => {
+            // Update the userCharity and set the corresponding job id
+            // to create the reference
+            const user = updatedUser[i];
+            const postId = user.myPosts[0];
+            comment.post = [postId];
+            // const salt = bcrypt.genSaltSync(saltRounds);
+            // user.password = bcrypt.hashSync(user.password, salt);
+
+            return comment; // return the updated userCharity
+        });
+
+        const pr = Comment.create(updatedComment);
+        return pr; // forwards the promise to next `then`
+
+
+    }).then((createdComments) => {
+        console.log(`Created ${createdComments.length} comments`);
+        const promiseArr = createdComments.map((comment, i) => {
+            const postId = String(comment.post);
+            const currentComment = comment
+
+            const commentId = currentComment._id
+
+            // const postObj = { volunteer: volunteerUserId, accepted: false }
+            return Post.findByIdAndUpdate(postId, { $push: { comments: commentId } }, { new: true });
+        })
+        const pr = Promise.all(promiseArr); //makes one big promise around all promises coming from array
+        return pr
+
+    }).then((updatedComments) => {
+        console.log(`Updated ${updatedComments.length} comments`);
+        //     const updatedCommentUser = updatedComments.map((comment, i) => {
+
+        //         let randomNum = Math.floor(Math.random() * 6)
+        //         const randomUser = User.find();
+        //         console.log('random', randomUser);
+        //         const userId = randomUser._id;
+        //         comment.commentAuthor = [userId];
+
+
+        //         return comment; // return the updated userCharity
+        //     });
+
+        //     // const pr = Comment.create(updatedComment)
+        //     return updatedCommentUser
+
+        // }).then((updatedComment) => {
+        //     console.log(`Updated ${updatedComment.length} comments`);
+
+
+
         mongoose.connection.close();
 
     })
+
 
     .catch((err) => console.log(err));
