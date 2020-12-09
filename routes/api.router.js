@@ -27,9 +27,9 @@ router.get('/dashboard', isLoggedIn, (req, res, next) => {
 })
 
 
-// GET '/api/travelPost/:postId'
+// GET '/api/post/:postId'
 
-router.get('/travelPost/:postId', isLoggedIn, (req, res, next) => {
+router.get('/post/:postId', isLoggedIn, (req, res, next) => {
     const { postId } = req.params;
     Post
         .findById(postId)
@@ -283,6 +283,34 @@ router.get('/comment', isLoggedIn, (req, res, next) => {
                 .json(err) //sends error to json
         });
 
+})
+
+// POST '/api/createComment/'
+
+router.post('/createComment/:postId', isLoggedIn, (req, res, next) => {
+    const { description } = req.body;
+    const currentUserId = req.session.currentUser._id;
+    const { postId } = req.params;
+
+    Comment.create({ description, commentAuthor: currentUserId, post: postId })
+        .then((createdCommment) => {
+
+            Post.findByIdAndUpdate(
+                postId,
+                { $push: { comments: createdCommment } },
+                { new: true }
+            )
+                .then(() => {
+                    res
+                        .status(201)
+                        .send(`Comment ${createdCommment} was updated successfully.`);
+
+                })
+        }).catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
 })
 
 module.exports = router;
