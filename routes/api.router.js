@@ -155,7 +155,6 @@ router.get('/myPosts/:userId', isLoggedIn, (req, res, next) => {
 // POST '/api/createPost'
 
 router.post('/createPost', isLoggedIn, (req, res, next) => {
-
     const { title, country, city, image, description, postAuthor } = req.body;
     const currentUserId = req.session.currentUser._id;
     // console.log('currentUser', currentUsername);
@@ -176,9 +175,35 @@ router.post('/createPost', isLoggedIn, (req, res, next) => {
                 .status(404)//stands for not found
                 .json(err) //sends error to json
         });
-
-
 })
 
+
+// PUT '/api/editPost/:postId'
+
+router.put('/editPost/:postId', (req, res, next) => {
+    const { postId } = req.params;
+    const { title, country, description, city, image } = req.body;
+    console.log('req.body', req.body);
+    console.log('req.params', req.params);
+
+    Post.findByIdAndUpdate(postId, {
+        title,
+        country,
+        description,
+        city,
+        image
+    },
+        { new: true }
+    ).then((updatedPost) => {
+        res
+            .status(200) //okay 
+            .json(updatedPost)
+    }).catch((err) => {
+        res
+            .status(400)//stands for bad request
+            .json(err) //sends error to json
+    });
+
+})
 
 module.exports = router;

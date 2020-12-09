@@ -69,7 +69,7 @@ router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
 
       if (passwordIsValid) {
         // set the `req.session.currentUser`, to trigger creation of the session
-        user.password = "*";
+        user.password = "*******";
         req.session.currentUser = user;
 
         res

@@ -37,13 +37,14 @@ mongoose
     .then(() => {
         // 2.  CREATE THE DOCUMENTS FROM ARRAY OF USERS
 
+        //mapping over users mock data to hash their passwords 
         const updatedUser = users.map((user) => {
             const salt = bcrypt.genSaltSync(saltRounds);
             user.password = bcrypt.hashSync(user.password, salt);
             return user
 
         })
-
+        // creating users with already hashed passwords
         const pr = User.create(updatedUser);
         return pr;
 
@@ -60,9 +61,6 @@ mongoose
             const user = createdUsers[i];
             const userId = user._id;
             post.postAuthor = [userId];
-            // const salt = bcrypt.genSaltSync(saltRounds);
-            // user.password = bcrypt.hashSync(user.password, salt);
-
             return post; // return the updated userCharity
         });
         const pr = Post.create(updatedPost);

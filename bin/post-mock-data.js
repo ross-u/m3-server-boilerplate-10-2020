@@ -24,7 +24,7 @@ const postCollection = [
         title: 'Dublin Ahoy',
         country: 'Ireland',
         city: 'Dublin',
-        description: 'I went to too many Irish pubs and drank so much Guinness and danced like Michael Flatley. I was impressive!',
+        description: 'I went to too many Irish pubs and drank so much Guinness and danced like Michael Flatley. I was very impressive!',
         image: 'https://catherinette.files.wordpress.com/2009/03/michael-flatley.jpg',
     },
     {
