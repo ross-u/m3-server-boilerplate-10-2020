@@ -46,27 +46,7 @@ router.get('/travelPost/:postId', isLoggedIn, (req, res, next) => {
         });
 });
 
-// POST '/api/travelPost/add/:postId/:userId'
 
-router.post('/travelPost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
-    const { postId, userId } = req.params;
-    User
-        .findByIdAndUpdate(
-            userId,
-            { $push: { favorites: postId } },
-            { new: true }
-        )
-        .then((updatedUser) => {
-            res
-                .status(200) //okay 
-                .json(updatedUser)
-        })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
-});
 
 
 // GET '/api/profile/:userId'
@@ -241,20 +221,51 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
         });
 })
 
-// DELETE '/api/deleteFavorite/:postId'
-router.delete('/deleteFavorite/:postId', isLoggedIn, (req, res, next) => {
+
+// POST '/api/favoritePost/add/:postId/:userId'
+
+router.post('/favoritePost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
+    const { postId, userId } = req.params;
+    User
+        .findByIdAndUpdate(
+            userId,
+            { $push: { favorites: postId } },
+            { new: true }
+        )
+        .then((updatedUser) => {
+            res
+                .status(200) //okay 
+                .json(updatedUser)
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+});
+
+
+// DELETE '/api/deleteFavorite/:favoritePostId'
+router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) => {
     const currentUserId = req.session.currentUser._id;
     const { postId } = req.params;
 
-    User.findById(currentUserId)
-        .then((foundUser) => {
-            const updatedFavorites = foundUser.favorites.includes((favorite) => {
-                if (favorite !== postId) {
+    User.findByIdAndUpdate(
+        currentUserId,
+        { $pull: { favorites: postId } },
+        { new: true }
+    )
+        .then((updatedUser) => {
+            res
+                .status(200) //okay 
+                .send(`User favorites ${updatedUser} was updated successfully.`);
 
-                }
-            })
-            console.log('updatedFav', updatedFavorites);
-        })
+        }).catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+
 })
 
 
