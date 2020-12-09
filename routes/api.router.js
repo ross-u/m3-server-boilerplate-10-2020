@@ -241,6 +241,37 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
         });
 })
 
+// DELETE '/api/deleteFavorite/:postId'
+router.delete('/deleteFavorite/:postId', isLoggedIn, (req, res, next) => {
+    const currentUserId = req.session.currentUser._id;
+    const { postId } = req.params;
 
+    User.findById(currentUserId)
+        .then((foundUser) => {
+            const updatedFavorites = foundUser.favorites.includes((favorite) => {
+                if (favorite !== postId) {
+
+                }
+            })
+            console.log('updatedFav', updatedFavorites);
+        })
+})
+
+
+// GET '/api/comment/'
+router.get('/comment', isLoggedIn, (req, res, next) => {
+
+    Comment.find()
+        .then((foundComments) => {
+            res
+                .status(200) //okay 
+                .json(foundComments)
+        }).catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+
+})
 
 module.exports = router;
