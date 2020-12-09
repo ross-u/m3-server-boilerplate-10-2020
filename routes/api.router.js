@@ -53,7 +53,7 @@ router.post('/travelPost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
     User
         .findByIdAndUpdate(
             userId,
-            { favorites: postId },
+            { $push: { favorites: postId } },
             { new: true }
         )
         .then((updatedUser) => {
@@ -222,5 +222,25 @@ router.delete('/deletePost/:postId', isLoggedIn, (req, res, next) => {
                 .json(err) //sends error to json
         });
 })
+
+
+// GET '/api/favoritePosts/:userId'
+router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
+    const { userId } = req.params;
+    User
+        .findById(userId)
+        .populate('favorites')
+        .then((foundUser) => {
+            res
+                .status(200) //okay 
+                .json(foundUser.favorites)
+        }).catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
+})
+
+
 
 module.exports = router;
