@@ -180,7 +180,7 @@ router.post('/createPost', isLoggedIn, (req, res, next) => {
 
 // PUT '/api/editPost/:postId'
 
-router.put('/editPost/:postId', (req, res, next) => {
+router.put('/editPost/:postId', isLoggedIn, (req, res, next) => {
     const { postId } = req.params;
     const { title, country, description, city, image } = req.body;
     console.log('req.body', req.body);
@@ -203,7 +203,24 @@ router.put('/editPost/:postId', (req, res, next) => {
             .status(400)//stands for bad request
             .json(err) //sends error to json
     });
+})
 
+// DELETE '/api/deletePost/:postId'
+
+router.delete('/deletePost/:postId', isLoggedIn, (req, res, next) => {
+    const { postId } = req.params;
+    Post.findByIdAndDelete(postId)
+        .then(() => {
+            res
+                .status(200) //okay
+                .send(`Post ${postId} was removed successfully.`);
+
+        })
+        .catch((err) => {
+            res
+                .status(404)//stands for not found
+                .json(err) //sends error to json
+        });
 })
 
 module.exports = router;
