@@ -19,11 +19,7 @@ router.get('/dashboard', isLoggedIn, (req, res, next) => {
                 .status(200) //okay 
                 .json(foundPosts)
         })
-        .catch((err) => {
-            res
-                .status(400)//stands for bad request
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
 })
 
 
@@ -39,11 +35,7 @@ router.get('/post/:postId', isLoggedIn, (req, res, next) => {
                 .status(200) //okay 
                 .json(foundPost)
         })
-        .catch((err) => {
-            res
-                .status(400)//stands for bad request
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
 });
 
 
@@ -60,11 +52,7 @@ router.get('/profile/:userId', isLoggedIn, (req, res, next) => {
                 .status(200) //okay
                 .json(foundUser)
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
 })
 
 // PUT '/api/editProfile/:userId'
@@ -89,11 +77,8 @@ router.put('/editProfile/:userId', isLoggedIn, (req, res, next) => {
                 .status(200) //okay
                 .json(updatedUser)
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
+
 })
 
 
@@ -107,11 +92,8 @@ router.delete('/deleteProfileConfirmation/:userId', isLoggedIn, (req, res, next)
                 .send(`User ${userId} was removed successfully.`);
 
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
+
 })
 
 // GET '/api/myPosts/:userId'
@@ -125,11 +107,9 @@ router.get('/myPosts/:userId', isLoggedIn, (req, res, next) => {
             res
                 .status(200) //okay 
                 .json(foundUser.myPosts)
-        }).catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        })
+        .catch((err) => next(createError(err)))
+
 })
 
 // POST '/api/createPost'
@@ -150,11 +130,8 @@ router.post('/createPost', isLoggedIn, (req, res, next) => {
                         .send(`Post ${createdPost} was created successfully.`);
                 })
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
+
 })
 
 
@@ -178,11 +155,9 @@ router.put('/editPost/:postId', isLoggedIn, (req, res, next) => {
         res
             .status(200) //okay 
             .json(updatedPost)
-    }).catch((err) => {
-        res
-            .status(400)//stands for bad request
-            .json(err) //sends error to json
-    });
+    })
+        .catch((err) => next(createError(err)))
+
 })
 
 // DELETE '/api/deletePost/:postId'
@@ -196,11 +171,8 @@ router.delete('/deletePost/:postId', isLoggedIn, (req, res, next) => {
                 .send(`Post ${postId} was removed successfully.`);
 
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
+
 })
 
 
@@ -214,11 +186,9 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
             res
                 .status(200) //okay 
                 .json(foundUser.favorites)
-        }).catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        })
+        .catch((err) => next(createError(err)))
+
 })
 
 
@@ -237,11 +207,8 @@ router.post('/favoritePost/add/:postId/:userId', isLoggedIn, (req, res, next) =>
                 .status(200) //okay 
                 .json(updatedUser)
         })
-        .catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        .catch((err) => next(createError(err)))
+
 });
 
 
@@ -260,11 +227,9 @@ router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) =>
                 .status(200) //okay 
                 .send(`User favorites ${updatedUser} was updated successfully.`);
 
-        }).catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        })
+        .catch((err) => next(createError(err)))
+
 
 })
 
@@ -277,11 +242,9 @@ router.get('/comment', isLoggedIn, (req, res, next) => {
             res
                 .status(200) //okay 
                 .json(foundComments)
-        }).catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        })
+        .catch((err) => next(createError(err)))
+
 
 })
 
@@ -306,11 +269,9 @@ router.post('/createComment/:postId', isLoggedIn, (req, res, next) => {
                         .send(`Comment ${createdCommment} was updated successfully.`);
 
                 })
-        }).catch((err) => {
-            res
-                .status(404)//stands for not found
-                .json(err) //sends error to json
-        });
+        })
+        .catch((err) => next(createError(err)))
+
 })
 
 module.exports = router;
