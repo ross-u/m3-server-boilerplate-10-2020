@@ -29,7 +29,7 @@ const postCollection = [
     },
     {
         title: 'Bristol is the Best!',
-        country: 'UK',
+        country: 'England',
         city: 'Bristol',
         description: 'I was recommended to go to Bristol and it was the best experience! The Suspension Bridge is wonderful! I saw a deer!',
         image: 'https://thebristolmag.co.uk/wp-content/uploads/2018/02/Ashton-Court-Red-Deer-1.jpg',

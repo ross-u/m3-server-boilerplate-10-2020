@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User.model');
 const Post = require('../models/Post.model');
 const Comment = require('../models/Comment.model')
+const Diary = require('../models/Diary.model')
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 
@@ -15,6 +16,7 @@ const bcrypt = require('bcrypt');
 const users = require('./user-mock-data');
 const posts = require('./post-mock-data');
 const comments = require('./comment-mock-data');
+const diaries = require('./diary-mock-data');
 
 const DB_NAME = "travel-guru";
 
@@ -86,15 +88,11 @@ mongoose
             // Update the userCharity and set the corresponding job id
             // to create the reference
             const randomIndex = Math.floor(Math.random() * usersCopy.length)
-            console.log('randomIndex', randomIndex);
-
             const randomUser = usersCopy.splice(randomIndex, 1)[0]
-
             const user = updatedUsers[i];
             const postId = user.myPosts[0];
             comment.post = postId;
             comment.commentAuthor = randomUser._id;
-
             return comment; // return the updated userCharity
         });
 
@@ -115,44 +113,45 @@ mongoose
             return Post.findByIdAndUpdate(postId, { $push: { comments: commentId } }, { new: true });
         })
         const pr = Promise.all(promiseArr); //makes one big promise around all promises coming from array
-
         return pr
-
-    }).then((updatedPosts) => {
-        console.log(`Updated ${updatedPosts.length} posts`);
-        const foundComment = Comment.find()
-        return foundComment
-
-
     })
-    // .then((foundComments) => {
-    //     const updatedComment = User.find()
-    //         .then((foundUsers) => {
-    //             const updatedCommentUser = foundComments.map((comment) => {
-    //                 let randomNum = Math.floor(Math.random() * foundUsers.length)
-    //                 const randomUser = foundUsers[randomNum];
-    //                 const randomUserId = randomUser._id
-    //                 comment.commentAuthor = [randomUserId];
-    //                 return comment
-    //             })
-    //             return updatedCommentUser
+    .then((updatedPosts) => {
+        console.log(`Updated ${updatedPosts.length} posts`);
 
-    //         })
-    //         .catch((err) => console.log(err));
-    //     return updatedComment
-    // })
-    // .then((comments) => {
-    //     const createdComments = Comment.create(comments)
+        const updatedDiary = diaries.map((diary, i) => {
+            const currentUserId = updatedPosts[i].postAuthor;
+            diary.diaryAuthor = currentUserId;
+            return diary;
+        })
+        const pr = Diary.create(updatedDiary);
+        return pr;
+    })
+    .then((updatedDiary) => {
+        console.log(`Created ${updatedDiary.length} diary entries`);
 
-    //     return createdComments
-
-    // })
-    .then((updatedComments) => {
-        // console.log('updatedComments', updatedComments);
+        const updatedUser = updatedDiary.map((diary) => {
+            const userId = diary.diaryAuthor;
+            const diaryId = diary._id
+            return User.findByIdAndUpdate(
+                userId,
+                { $push: { myDiary: diaryId } },
+                { new: true }
+            )
+        })
+        const pr = Promise.all(updatedUser); //makes one big promise around all promises coming from array
+        return pr
+    })
+    .then((updatedUser) => {
+        console.log(`Updated ${updatedUser.length} user`);
 
         mongoose.connection.close();
 
     })
-
-
     .catch((err) => console.log(err));
+
+
+      // .then((updatedPosts) => {
+    //     console.log(`Updated ${updatedPosts.length} posts`);
+    //     const foundComment = Comment.find()
+    //     return foundComment
+    // })
