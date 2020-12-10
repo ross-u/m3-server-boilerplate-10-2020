@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const diarySchema = new Schema({
+const travelLogSchema = new Schema({
     title: { type: String, required: true },
     country: { type: String, required: true },
     city: { type: String, required: true },
     description: { type: String, required: true },
-    diaryAuthor: { type: Schema.Types.ObjectId, ref: "User" }
+    travelLogAuthor: { type: Schema.Types.ObjectId, ref: "User" }
 },
     {
         timestamps: {
@@ -16,6 +16,6 @@ const diarySchema = new Schema({
     }
 )
 
-const Diary = mongoose.model('Diary', diarySchema);
+const TravelLog = mongoose.model('TravelLog', travelLogSchema);
 
-module.exports = Diary;
+module.exports = TravelLog;

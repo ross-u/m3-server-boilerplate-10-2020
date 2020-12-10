@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User.model');
 const Post = require('../models/Post.model');
 const Comment = require('../models/Comment.model')
-const Diary = require('../models/Diary.model')
+const TravelLog = require('../models/TravelLog.model')
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 
@@ -16,7 +16,7 @@ const bcrypt = require('bcrypt');
 const users = require('./user-mock-data');
 const posts = require('./post-mock-data');
 const comments = require('./comment-mock-data');
-const diaries = require('./diary-mock-data');
+const travelLogs = require('./travelLog-mock-data');
 
 const DB_NAME = "travel-guru";
 
@@ -118,23 +118,23 @@ mongoose
     .then((updatedPosts) => {
         console.log(`Updated ${updatedPosts.length} posts`);
 
-        const updatedDiary = diaries.map((diary, i) => {
+        const updatedTravelLog = travelLogs.map((travelLog, i) => {
             const currentUserId = updatedPosts[i].postAuthor;
-            diary.diaryAuthor = currentUserId;
-            return diary;
+            travelLog.travelLogAuthor = currentUserId;
+            return travelLog;
         })
-        const pr = Diary.create(updatedDiary);
+        const pr = TravelLog.create(updatedTravelLog);
         return pr;
     })
-    .then((updatedDiary) => {
-        console.log(`Created ${updatedDiary.length} diary entries`);
+    .then((updatedTravelLog) => {
+        console.log(`Created ${updatedTravelLog.length} travelLog entries`);
 
-        const updatedUser = updatedDiary.map((diary) => {
-            const userId = diary.diaryAuthor;
-            const diaryId = diary._id
+        const updatedUser = updatedTravelLog.map((travelLog) => {
+            const userId = travelLog.travelLogAuthor;
+            const travelLogid = travelLog._id
             return User.findByIdAndUpdate(
                 userId,
-                { $push: { myDiary: diaryId } },
+                { $push: { myTravelLog: travelLogid } },
                 { new: true }
             )
         })
@@ -142,7 +142,7 @@ mongoose
         return pr
     })
     .then((updatedUser) => {
-        console.log(`Updated ${updatedUser.length} user`);
+        console.log(`Updated ${updatedUser.length} users`);
 
         mongoose.connection.close();
 

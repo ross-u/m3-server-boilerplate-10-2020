@@ -12,7 +12,7 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   myPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   favorites: [{ type: Schema.Types.ObjectId, ref: "Post" }],
-  myDiary: [{ type: Schema.Types.ObjectId, ref: "Diary" }]
+  myTravelLog: [{ type: Schema.Types.ObjectId, ref: "TravelLog" }]
 },
   {
     timestamps: {
