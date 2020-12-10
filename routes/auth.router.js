@@ -6,7 +6,7 @@ const saltRounds = 10;
 const User = require("../models/User.model");
 
 //require uploader, already exported from cloudinary-setup.js
-const uploader = require("./../configs/cloudinary-setup");
+const uploader = require("./../config/cloudinary-setup");
 
 // include CLOUDINARY:
 //upload a single image per once.

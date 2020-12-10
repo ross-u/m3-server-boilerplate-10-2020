@@ -7,7 +7,7 @@ const Comment = require("../models/Comment.model");
 const TravelLog = require("../models/TravelLog.model");
 
 //require uploader, already exported from cloudinary-setup.js
-const uploader = require("./../configs/cloudinary-setup");
+const uploader = require("./../config/cloudinary-setup");
 
 // include CLOUDINARY:
 //upload a single image per once.
