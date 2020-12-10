@@ -273,7 +273,18 @@ router.post('/createComment/:postId', isLoggedIn, (req, res, next) => {
                 })
         })
         .catch((err) => next(createError(err)))
+})
 
+// GET '/api/travelLogs/'
+
+router.get('/travelLogs', isLoggedIn, (req, res, next) => {
+    TravelLog.find()
+        .then((foundTravelLogs) => {
+            res
+                .status(200) //okay 
+                .json(foundTravelLogs)
+        })
+        .catch((err) => next(createError(err)))
 })
 
 module.exports = router;

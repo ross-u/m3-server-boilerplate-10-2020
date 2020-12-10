@@ -1,4 +1,4 @@
-const diaryCollection = [
+const travelLogCollection = [
     {
         title: 'Monkeys, Monkeys!',
         country: 'Bali',
@@ -37,4 +37,4 @@ const diaryCollection = [
     },
 ]
 
-module.exports = diaryCollection;
+module.exports = travelLogCollection;
