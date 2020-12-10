@@ -196,11 +196,13 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
 
 // POST '/api/favoritePost/add/:postId/:userId'
 
-router.post('/favoritePost/add/:postId/:userId', isLoggedIn, (req, res, next) => {
-    const { postId, userId } = req.params;
+router.post('/favoritePost/add/:postId', isLoggedIn, (req, res, next) => {
+    const currentUserId = req.session.currentUser._id;
+
+    const { postId } = req.params;
     User
         .findByIdAndUpdate(
-            userId,
+            currentUserId,
             { $push: { favorites: postId } },
             { new: true }
         )
@@ -217,22 +219,21 @@ router.post('/favoritePost/add/:postId/:userId', isLoggedIn, (req, res, next) =>
 // DELETE '/api/deleteFavorite/:favoritePostId'
 router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) => {
     const currentUserId = req.session.currentUser._id;
-    const { postId } = req.params;
+    const { favoritePostId } = req.params;
 
     User.findByIdAndUpdate(
         currentUserId,
-        { $pull: { favorites: postId } },
+        { $pull: { favorites: favoritePostId } },
         { new: true }
     )
         .then((updatedUser) => {
+            console.log('UPDATEDuSR', updatedUser);
             res
                 .status(200) //okay 
                 .send(`User favorites ${updatedUser} was updated successfully.`);
 
         })
         .catch((err) => next(createError(err)))
-
-
 })
 
 
@@ -285,6 +286,58 @@ router.get('/travelLogs', isLoggedIn, (req, res, next) => {
                 .json(foundTravelLogs)
         })
         .catch((err) => next(createError(err)))
+})
+
+// POST '/api/createTravelLog/'
+router.post('/createTravelLog', isLoggedIn, (req, res, next) => {
+    const { title, country, city, description } = req.body;
+    const currentUserId = req.session.currentUser._id;
+
+    TravelLog.create({ title, country, city, description, travelLogAuthor: currentUserId })
+        .then((createdTravelLog) => {
+
+            User.findByIdAndUpdate(
+                currentUserId,
+                { $push: { myTravelLog: createdTravelLog } },
+                { new: true }
+            )
+                .then(() => {
+                    res
+                        .status(201)
+                        .send(`User travelLog ${createdTravelLog} was updated successfully.`);
+
+                })
+        })
+        .catch((err) => next(createError(err)))
+})
+
+
+// DELETE '/api/deleteTravelLog/:travelLogId'
+
+router.delete('/deleteTravelLog/:travelLogId', isLoggedIn, (req, res, next) => {
+    const { travelLogId } = req.params;
+    const currentUserId = req.session.currentUser._id;
+
+    TravelLog.findByIdAndDelete(travelLogId)
+        .then((deletedTraveLog) => {
+
+            User.findByIdAndUpdate(
+                currentUserId,
+                {
+                    $pull: {
+                        myTravelLog: travelLogId
+                    }
+                },
+                { new: true }
+            )
+                .then((updatedUser) => {
+                    res
+                        .status(200) //okay
+                        .send(`Travel Log ${updatedUser} was removed successfully from user.`);
+                })
+        })
+        .catch((err) => next(createError(err)))
+
 })
 
 module.exports = router;
