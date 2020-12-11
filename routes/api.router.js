@@ -49,7 +49,7 @@ router.get('/post/:postId', isLoggedIn, (req, res, next) => {
     Post
         .findById(postId)
         .then((foundPost) => {
-            console.log('found', foundPost);
+            // console.log('found', foundPost);
             res
                 .status(200) //okay 
                 .json(foundPost)
@@ -62,9 +62,9 @@ router.get('/post/:postId', isLoggedIn, (req, res, next) => {
 
 // GET '/api/profile/:userId'
 
-router.get('/profile/:userId', isLoggedIn, (req, res, next) => {
+router.get('/profile/:userId', (req, res, next) => {
     const { userId } = req.params;
-    console.log('user', req.params);
+    // console.log('user', req.params);
     User.findById(userId)
         .then((foundUser) => {
             res
@@ -76,9 +76,12 @@ router.get('/profile/:userId', isLoggedIn, (req, res, next) => {
 
 // PUT '/api/editProfile/:userId'
 
-router.put('/editProfile/:userId', isLoggedIn, (req, res, next) => {
+router.put('/editProfile/:userId', (req, res, next) => {
     const { userId } = req.params;
     const { name, username, nationality, myFavoriteTrip, description, image } = req.body;
+
+    let uploadedImage = image ? image : req.session.currentUser.image;
+
     User.findByIdAndUpdate(
         userId,
         {
@@ -87,7 +90,7 @@ router.put('/editProfile/:userId', isLoggedIn, (req, res, next) => {
             nationality,
             myFavoriteTrip,
             description,
-            image
+            image: uploadedImage
         },
         { new: true }
     )
@@ -159,8 +162,8 @@ router.post('/createPost', isLoggedIn, (req, res, next) => {
 router.put('/editPost/:postId', isLoggedIn, (req, res, next) => {
     const { postId } = req.params;
     const { title, country, description, city, image } = req.body;
-    console.log('req.body', req.body);
-    console.log('req.params', req.params);
+    // console.log('req.body', req.body);
+    // console.log('req.params', req.params);
 
     Post.findByIdAndUpdate(postId, {
         title,
@@ -244,7 +247,7 @@ router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) =>
         { new: true }
     )
         .then((updatedUser) => {
-            console.log('UPDATEDuSR', updatedUser);
+            // console.log('UPDATEDuSR', updatedUser);
             res
                 .status(200) //okay 
                 .send(`User favorites ${updatedUser} was updated successfully.`);

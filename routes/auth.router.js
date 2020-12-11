@@ -32,6 +32,7 @@ const {
 
 // POST '/auth/signup'
 router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
+
   const { name, username, password, email, image } = req.body;
 
   User.findOne({ username })
@@ -107,7 +108,7 @@ router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
 
 
 // GET '/auth/logout'
-router.get('/logout', isLoggedIn, (req, res, next) => {
+router.get('/logout', (req, res, next) => {
   req.session.destroy(function (err) {
     if (err) {
       return next(err);
