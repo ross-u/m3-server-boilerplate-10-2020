@@ -48,8 +48,10 @@ router.get('/post/:postId', isLoggedIn, (req, res, next) => {
     const { postId } = req.params;
     Post
         .findById(postId)
+        .populate('postAuthor')
         .then((foundPost) => {
             // console.log('found', foundPost);
+
             res
                 .status(200) //okay 
                 .json(foundPost)
@@ -216,7 +218,7 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
 
 // POST '/api/favoritePost/add/:postId/:userId'
 
-router.post('/favoritePost/add/:postId', isLoggedIn, (req, res, next) => {
+router.post('/favoritePost/add/:postId', (req, res, next) => {
     const currentUserId = req.session.currentUser._id;
 
     const { postId } = req.params;
@@ -258,10 +260,14 @@ router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) =>
 
 
 // GET '/api/comment/'
-router.get('/comment', isLoggedIn, (req, res, next) => {
-
-    Comment.find()
-        .then((foundComments) => {
+router.get('/comment/:postId', isLoggedIn, (req, res, next) => {
+    const { postId } = req.params;
+    Post
+        .findById(postId)
+        .populate('comments')
+        .then((postObj) => {
+            const foundComments = postObj.comments;
+            console.log('found', foundComments);
             res
                 .status(200) //okay 
                 .json(foundComments)
