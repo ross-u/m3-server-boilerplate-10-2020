@@ -267,7 +267,6 @@ router.get('/comment/:postId', isLoggedIn, (req, res, next) => {
         .populate('comments')
         .then((postObj) => {
             const foundComments = postObj.comments;
-            console.log('found', foundComments);
             res
                 .status(200) //okay 
                 .json(foundComments)
