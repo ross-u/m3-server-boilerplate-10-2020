@@ -49,6 +49,15 @@ router.get('/post/:postId', isLoggedIn, (req, res, next) => {
     Post
         .findById(postId)
         .populate('postAuthor')
+        .populate({
+            path: 'comments',
+            model: 'Comment',
+            populate: {
+                path: 'commentAuthor',
+                model: 'User'
+            }
+        })
+        // .populate('comments')
         .then((foundPost) => {
             // console.log('found', foundPost);
 
