@@ -118,13 +118,30 @@ router.put('/editProfile/:userId', (req, res, next) => {
 // DELETE '/api/deleteProfileConfirmation/:userId'
 router.delete('/deleteProfileConfirmation/:userId', isLoggedIn, (req, res, next) => {
     const { userId } = req.params;
-    User.findByIdAndDelete(userId)
+    Post.deleteMany({ postAuthor: userId })
         .then(() => {
-            res
-                .status(200) //okay
-                .send(`User ${userId} was removed successfully.`);
+            TravelLog.deleteMany({ travelLogAuthor: userId })
+                .then(() => {
+                    User.findByIdAndDelete(userId)
+                        .then(() => {
+                            // req.session.destroy()
+                            res
+                                .status(200) //okay
+                                .send(`User ${userId} was removed successfully.`);
 
+                        })
+                })
         })
+        // TravelLog.deleteMany
+        // .then((deletedUser) => {
+        //     const postArr = deletedUser.myPosts;
+        //     Post.find
+        //     Post.
+        //         res
+        //         .status(200) //okay
+        //         .send(`User ${userId} was removed successfully.`);
+
+        // })
         .catch((err) => next(createError(err)))
 
 })
@@ -316,10 +333,10 @@ router.get('/travelLogs', isLoggedIn, (req, res, next) => {
     const currentUserId = req.session.currentUser._id;
 
     User
-    .findById(currentUserId)
-    .populate('myTravelLog')
+        .findById(currentUserId)
+        .populate('myTravelLog')
         .then((foundUser) => {
-            
+
             const travelLogArr = foundUser.myTravelLog
             res
                 .status(200) //okay 
