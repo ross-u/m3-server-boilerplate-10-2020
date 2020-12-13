@@ -321,8 +321,6 @@ router.get('/travelLogs', isLoggedIn, (req, res, next) => {
         .then((foundUser) => {
             
             const travelLogArr = foundUser.myTravelLog
-            console.log("Founr User", foundUser);
-            
             res
                 .status(200) //okay 
                 .json(travelLogArr)
