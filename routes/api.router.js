@@ -313,11 +313,19 @@ router.post('/createComment/:postId', isLoggedIn, (req, res, next) => {
 // GET '/api/travelLogs/'
 
 router.get('/travelLogs', isLoggedIn, (req, res, next) => {
-    TravelLog.find()
-        .then((foundTravelLogs) => {
+    const currentUserId = req.session.currentUser._id;
+
+    User
+    .findById(currentUserId)
+    .populate('myTravelLog')
+        .then((foundUser) => {
+            
+            const travelLogArr = foundUser.myTravelLog
+            console.log("Founr User", foundUser);
+            
             res
                 .status(200) //okay 
-                .json(foundTravelLogs)
+                .json(travelLogArr)
         })
         .catch((err) => next(createError(err)))
 })
