@@ -269,21 +269,21 @@ router.delete('/deleteFavorite/:favoritePostId', isLoggedIn, (req, res, next) =>
 
 
 // GET '/api/comment/'
-router.get('/comment/:postId', isLoggedIn, (req, res, next) => {
-    const { postId } = req.params;
-    Post
-        .findById(postId)
-        .populate('comments')
-        .then((postObj) => {
-            const foundComments = postObj.comments;
-            res
-                .status(200) //okay 
-                .json(foundComments)
-        })
-        .catch((err) => next(createError(err)))
+// router.get('/comment/:postId', isLoggedIn, (req, res, next) => {
+//     const { postId } = req.params;
+//     Post
+//         .findById(postId)
+//         .populate('comments')
+//         .then((postObj) => {
+//             const foundComments = postObj.comments;
+//             res
+//                 .status(200) //okay 
+//                 .json(foundComments)
+//         })
+//         .catch((err) => next(createError(err)))
 
 
-})
+// })
 
 // POST '/api/createComment/'
 
