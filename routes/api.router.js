@@ -244,13 +244,14 @@ router.get('/favoritePosts/:userId', isLoggedIn, (req, res, next) => {
 
 // POST '/api/favoritePost/add/:postId/:userId'
 
-router.post('/favoritePost/add/:postId', (req, res, next) => {
-    const currentUserId = req.session.currentUser._id;
+router.post('/favoritePost/add/:postId/:userId', (req, res, next) => {
+    // const currentUserId = req.session.currentUser._id;
+    // console.log('currentSession', req.session.currentUser._id);
 
-    const { postId } = req.params;
+    const { postId, userId } = req.params;
     User
         .findByIdAndUpdate(
-            currentUserId,
+            userId,
             { $push: { favorites: postId } },
             { new: true }
         )
