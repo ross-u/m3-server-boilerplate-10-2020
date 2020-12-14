@@ -214,11 +214,22 @@ router.put('/editPost/:postId', isLoggedIn, (req, res, next) => {
 
 router.delete('/deletePost/:postId', isLoggedIn, (req, res, next) => {
     const { postId } = req.params;
-    Post.findByIdAndDelete(postId)
+    const currentUserId = req.session.currentUser._id;
+    console.log('postId', postId);
+
+    User.findByIdAndUpdate(
+        currentUserId,
+        { $pull: { myPosts: postId } },
+        { new: true }
+    )
         .then(() => {
-            res
-                .status(200) //okay
-                .send(`Post ${postId} was removed successfully.`);
+            Post.findByIdAndDelete(postId)
+                .then((response) => {
+
+                    res
+                        .status(200) //okay
+                        .send(`Post ${response} was removed successfully.`);
+                })
 
         })
         .catch((err) => next(createError(err)))
