@@ -3,7 +3,25 @@ const router = express.Router();
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const User = require("../models/user.model");
+const User = require("../models/User.model");
+
+//require uploader, already exported from cloudinary-setup.js
+const uploader = require("./../config/cloudinary-setup");
+
+// include CLOUDINARY:
+//upload a single image per once.
+// ADD an horitzontal middleware
+router.post("/upload", uploader.single("image"), (req, res, next) => {
+  console.log("file is: ", req.file);
+
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  // get secure_url from the file object and save it in the
+  // variable 'secure_url', but this can be any name, just make sure you remember to use the same in frontend
+  res.json({ secure_url: req.file.secure_url });
+});
 
 // HELPER FUNCTIONS
 const {
@@ -14,22 +32,23 @@ const {
 
 // POST '/auth/signup'
 router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
-  const { username, password } = req.body;
+
+  const { name, username, password, email, image } = req.body;
 
   User.findOne({ username })
-    .then( (foundUser) => {
+    .then((foundUser) => {
 
       if (foundUser) {
         // If username is already taken, then return error response
-        return next( createError(400) ); // Bad Request
+        return next(createError(400)); // Bad Request
       }
       else {
         // If username is available, go and create a new user
         const salt = bcrypt.genSaltSync(saltRounds);
         const encryptedPassword = bcrypt.hashSync(password, salt);
 
-        User.create( { username, password: encryptedPassword })
-          .then( (createdUser) => {
+        User.create({ name, username, password: encryptedPassword, email, image })
+          .then((createdUser) => {
             // set the `req.session.currentUser` using newly created user object, to trigger creation of the session and cookie
             createdUser.password = "*";
             req.session.currentUser = createdUser; // automatically logs in the user by setting the session/cookie
@@ -39,13 +58,13 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
               .json(createdUser); // res.send()
 
           })
-          .catch( (err) => {
-            next( createError(err) );  //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
+          .catch((err) => {
+            next(createError(err));  //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
           });
       }
     })
-    .catch( (err) => {
-      next( createError(err) );
+    .catch((err) => {
+      next(createError(err));
     });
 
 
@@ -59,17 +78,17 @@ router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
   const { username, password } = req.body;
 
   User.findOne({ username })
-    .then( (user) => {
-      if (! user) {
+    .then((user) => {
+      if (!user) {
         // If user with that username can't be found, respond with an error
-        return next( createError(404)  );  // Not Found
+        return next(createError(404));  // Not Found
       }
 
       const passwordIsValid = bcrypt.compareSync(password, user.password); //  true/false
 
       if (passwordIsValid) {
         // set the `req.session.currentUser`, to trigger creation of the session
-        user.password = "*";
+        user.password = "*******";
         req.session.currentUser = user;
 
         res
@@ -78,19 +97,19 @@ router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
 
       }
       else {
-        next( createError(401) ); // Unathorized
+        next(createError(401)); // Unathorized
       }
 
     })
-    .catch( (err) => {
-      next( createError(err)  );
+    .catch((err) => {
+      next(createError(err));
     });
 })
 
 
 // GET '/auth/logout'
-router.get('/logout',  isLoggedIn, (req, res, next) => {
-  req.session.destroy( function(err){
+router.get('/logout', (req, res, next) => {
+  req.session.destroy(function (err) {
     if (err) {
       return next(err);
     }
@@ -98,7 +117,7 @@ router.get('/logout',  isLoggedIn, (req, res, next) => {
     res
       .status(204)  //  No Content
       .send();
-  } )
+  })
 })
 
 
