@@ -3,9 +3,9 @@ require("dotenv").config();
 const mongoose = require('mongoose');
 
 //requiring the schema
-const User = require('../models/User.model');
-const Post = require('../models/Post.model');
-const Comment = require('../models/Comment.model')
+const User = require('../models/user.model');
+const Post = require('../models/post.model');
+const Comment = require('../models/comment.model')
 const TravelLog = require('../models/TravelLog.model')
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
