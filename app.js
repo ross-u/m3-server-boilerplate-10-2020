@@ -32,9 +32,9 @@ app.use(
   cors({
     credentials: true,
     origin: [
-      process.env.PUBLIC_DOMAIN,
-      'http://travel-guru.herokuapp.com',
-      'https://travel-guru.herokuapp.com'
+      'http://localhost:3000',
+      'https://travel-guru.herokuapp.com',
+      'http://travel-guru.herokuapp.com'
     ],
   }),
 );
