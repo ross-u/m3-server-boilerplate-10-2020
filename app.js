@@ -13,7 +13,6 @@ const authRouter = require('./routes/auth.router');
 const apiRouter = require('./routes/api.router');
 
 
-
 // MONGOOSE CONNECTION
 mongoose
   .connect(process.env.MONGODB_URI, {
