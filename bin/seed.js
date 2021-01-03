@@ -54,7 +54,7 @@ mongoose
             const user = createdUsers[i];
             const userId = user._id;
             post.postAuthor = userId;
-            return post; // return the updated post
+            return post; // return the updated post with the userId
         });
 
         const pr = Post.create(updatedPost);
@@ -97,7 +97,7 @@ mongoose
     }).then((createdComments) => {
         console.log(`Created ${createdComments.length} comments`);
 
-        //mapping over the createdComments to get the postId and the commentId and to updated the Post field comments with the comment id
+        //mapping over the createdComments to get the postId and the commentId and to update the Post field comments with the comment id
         const promiseArr = createdComments.map((comment, i) => {
             const postId = String(comment.post);
             const currentComment = comment

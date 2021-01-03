@@ -50,7 +50,7 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
         User.create({ name, username, password: encryptedPassword, email, image })
           .then((createdUser) => {
             // set the `req.session.currentUser` using newly created user object, to trigger creation of the session and cookie
-            createdUser.password = "*";
+            createdUser.password = "******";
             req.session.currentUser = createdUser; // automatically logs in the user by setting the session/cookie
 
             res
