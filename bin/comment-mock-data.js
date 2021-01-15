@@ -19,5 +19,4 @@ const commentCollection = [
     }
 ]
 
-
 module.exports = commentCollection;

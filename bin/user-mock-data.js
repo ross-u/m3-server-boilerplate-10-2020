@@ -58,7 +58,7 @@ const userCollection = [
         image: 'https://media-exp1.licdn.com/dms/image/C4D03AQEUVqKj5QYltw/profile-displayphoto-shrink_800_800/0/1594301207824?e=1613001600&v=beta&t=_HTw-7XA2M8fu6HXezIMzrhsjkyBGrLFjxT8HQBmjQM',
         email: 'marta@mail.com',
         password: '123456'
-    },
+    }
 ]
 
 module.exports = userCollection;

@@ -34,7 +34,7 @@ const travelLogCollection = [
         country: 'Spain',
         city: 'Barcelona',
         description: 'Barcelona is the best place ever! Both the beach and the city - the best of both worlds!!! I have considered moving here. Cannot get enough of the tapas. They say it is better in the south but I disagree!!'
-    },
+    }
 ]
 
 module.exports = travelLogCollection;

@@ -4,7 +4,6 @@ const postCollection = [
         country: 'Bali',
         city: 'Ubud',
         description: 'Here I met many moneys on my travels, who put lots of bananas in my hair. Visit the monkey forest is a must!',
-        // image: 'https://www.divergenttravelers.com/wp-content/uploads/2014/06/edit-4545.jpg',
         image: 'https://res.cloudinary.com/dh9x14ff0/image/upload/v1608132062/travel-guru-in-cloudinary/bali.jpg'
     },
     {

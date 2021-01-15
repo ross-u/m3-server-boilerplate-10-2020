@@ -12,8 +12,6 @@ const uploader = require("./../config/cloudinary-setup");
 //upload a single image per once.
 // ADD an horitzontal middleware
 router.post("/upload", uploader.single("image"), (req, res, next) => {
-  console.log("file is: ", req.file);
-
   if (!req.file) {
     next(new Error("No file uploaded!"));
     return;
@@ -32,12 +30,9 @@ const {
 
 // POST '/auth/signup'
 router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
-
   const { name, username, password, email, image } = req.body;
-
   User.findOne({ username })
     .then((foundUser) => {
-
       if (foundUser) {
         // If username is already taken, then return error response
         return next(createError(400)); // Bad Request
@@ -52,7 +47,6 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
             // set the `req.session.currentUser` using newly created user object, to trigger creation of the session and cookie
             createdUser.password = "******";
             req.session.currentUser = createdUser; // automatically logs in the user by setting the session/cookie
-
             res
               .status(201) // Created
               .json(createdUser); // res.send()
@@ -66,46 +60,34 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
     .catch((err) => {
       next(createError(err));
     });
-
-
 })
-
-
-
 
 // POST '/auth/login'
 router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
   const { username, password } = req.body;
-
   User.findOne({ username })
     .then((user) => {
       if (!user) {
         // If user with that username can't be found, respond with an error
         return next(createError(404));  // Not Found
       }
-
       const passwordIsValid = bcrypt.compareSync(password, user.password); //  true/false
-
       if (passwordIsValid) {
         // set the `req.session.currentUser`, to trigger creation of the session
         user.password = "*******";
         req.session.currentUser = user;
-
         res
           .status(200)
           .json(user);
-
       }
       else {
         next(createError(401)); // Unathorized
       }
-
     })
     .catch((err) => {
       next(createError(err));
     });
 })
-
 
 // GET '/auth/logout'
 router.get('/logout', (req, res, next) => {
@@ -113,24 +95,18 @@ router.get('/logout', (req, res, next) => {
     if (err) {
       return next(err);
     }
-
     res
       .status(204)  //  No Content
       .send();
   })
 })
 
-
-
 // GET '/auth/me'
 router.get('/me', isLoggedIn, (req, res, next) => {
   const currentUserSessionData = req.session.currentUser;
-
   res
     .status(200)
     .json(currentUserSessionData);
-
 })
-
 
 module.exports = router;

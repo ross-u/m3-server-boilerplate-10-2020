@@ -12,7 +12,6 @@ require('dotenv').config();
 const authRouter = require('./routes/auth.router');
 const apiRouter = require('./routes/api.router');
 
-
 // MONGOOSE CONNECTION
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -22,7 +21,6 @@ mongoose
   })
   .then(() => console.log(`Connected to database`))
   .catch((err) => console.error(err));
-
 
 // EXPRESS SERVER INSTANCE
 const app = express();
@@ -38,7 +36,6 @@ app.use(
     ],
   }),
 );
-
 
 // SESSION MIDDLEWARE
 app.use(
@@ -67,7 +64,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
 
-
 // ROUTE FOR SERVING REACT APP (index.html)
 app.use((req, res, next) => {
   // If no previous routes match the request, send back the React app.
@@ -84,19 +80,15 @@ app.use((req, res, next) => {
 
 });
 
-
-
 // Catch `next(err)` calls
 app.use((err, req, res, next) => {
   // always log the error
   console.error('ERROR', req.method, req.path, err);
-
   // only render if the error ocurred before sending the response
   if (!res.headersSent) {
     const statusError = err.status || '500';
     res.status(statusError).json(err);
   }
 });
-
 
 module.exports = app;

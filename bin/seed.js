@@ -10,7 +10,6 @@ const TravelLog = require('../models/TravelLog.model')
 const saltRounds = 10;
 const bcrypt = require('bcrypt');
 
-
 //requiring the 'fake' objects
 const users = require('./user-mock-data');
 const posts = require('./post-mock-data');
@@ -30,7 +29,6 @@ mongoose
     .then((x) => {
         //DROP THE DATABASE
         const pr = x.connection.dropDatabase();
-
         return pr;
     })
     .then(() => {
@@ -48,7 +46,6 @@ mongoose
     })
     .then((createdUsers) => {
         console.log(`Created ${createdUsers.length} users`);
-
         //mapping over the posts to add the userId to the postAuthor field in the post model
         const updatedPost = posts.map((post, i) => {
             const user = createdUsers[i];
@@ -56,29 +53,22 @@ mongoose
             post.postAuthor = userId;
             return post; // return the updated post with the userId
         });
-
         const pr = Post.create(updatedPost);
         return pr;
     })
     .then((createdPosts) => {
         console.log(`Created ${createdPosts.length} posts`);
-
         //mapping over the created posts to find the userId and the postId and to update the users field 'myposts' with the postId
         const updateUserPromisesArr = createdPosts.map((post) => {
             const userId = String(post.postAuthor);
             const postId = post._id;
             return User.findByIdAndUpdate(userId, { $push: { myPosts: postId } }, { new: true }); //this returns many promises
         })
-
         const pr = Promise.all(updateUserPromisesArr); //makes one big promise out of all the promises coming from the array
-
         return pr;
-
     }).then((updatedUsers) => {
         console.log(`Updated ${updatedUsers.length} users`);
-
         const usersCopy = [...updatedUsers]; //make a copy of the user array
-
         //mapping over the comments to update the post field with the postId and the commentAuthor field with the userId. The userId found by Math.random
         const updatedComment = comments.map((comment, i) => {
             const randomIndex = Math.floor(Math.random() * usersCopy.length)
@@ -89,14 +79,10 @@ mongoose
             comment.commentAuthor = randomUser._id;
             return comment;
         });
-
         const pr = Comment.create(updatedComment);
         return pr;
-
-
     }).then((createdComments) => {
         console.log(`Created ${createdComments.length} comments`);
-
         //mapping over the createdComments to get the postId and the commentId and to update the Post field comments with the comment id
         const promiseArr = createdComments.map((comment, i) => {
             const postId = String(comment.post);
@@ -109,22 +95,19 @@ mongoose
     })
     .then((updatedPosts) => {
         console.log(`Updated ${updatedPosts.length} posts`);
-
         //mapping over the travelLogs to get the userId and to set it to the travelLogAuthor field of the travelLog
         const updatedTravelLog = travelLogs.map((travelLog, i) => {
             const currentUserId = updatedPosts[i].postAuthor;
             travelLog.travelLogAuthor = currentUserId;
             return travelLog;
         })
-
         const pr = TravelLog.create(updatedTravelLog);
         return pr;
     })
-    .then((updatedTravelLog) => {
-        console.log(`Created ${updatedTravelLog.length} travelLog entries`);
-
+    .then((createdTravelLogs) => {
+        console.log(`Created ${createdTravelLogs.length} travelLog entries`);
         //mapping over the updatedTravelLog to update the User field myTravelLog with the traveLogId
-        const updatedUser = updatedTravelLog.map((travelLog) => {
+        const updatedUser = createdTravelLogs.map((travelLog) => {
             const userId = travelLog.travelLogAuthor;
             const travelLogid = travelLog._id
             return User.findByIdAndUpdate(
@@ -139,6 +122,5 @@ mongoose
     .then((updatedUser) => {
         console.log(`Updated ${updatedUser.length} users`);
         mongoose.connection.close();
-
     })
     .catch((err) => console.log(err));

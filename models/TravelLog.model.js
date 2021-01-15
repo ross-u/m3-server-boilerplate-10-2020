@@ -17,5 +17,4 @@ const travelLogSchema = new Schema({
 )
 
 const TravelLog = mongoose.model('TravelLog', travelLogSchema);
-
 module.exports = TravelLog;
