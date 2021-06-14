@@ -10,7 +10,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const authRouter = require('./routes/auth.router');
-
+const apiRouter = require('./routes/api.router');
 
 // MONGOOSE CONNECTION
 mongoose
@@ -22,7 +22,6 @@ mongoose
   .then(() => console.log(`Connected to database`))
   .catch((err) => console.error(err));
 
-
 // EXPRESS SERVER INSTANCE
 const app = express();
 
@@ -30,10 +29,13 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN],
+    origin: [
+      'http://localhost:3000',
+      'https://travel-guru.herokuapp.com',
+      'http://travel-guru.herokuapp.com'
+    ],
   }),
 );
-
 
 // SESSION MIDDLEWARE
 app.use(
@@ -60,8 +62,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ROUTER MIDDLEWARE
 app.use('/auth', authRouter);
+app.use('/api', apiRouter);
 
-
+// ROUTE FOR SERVING REACT APP (index.html)
+app.use((req, res, next) => {
+  // If no previous routes match the request, send back the React app.
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 // ERROR HANDLING
 //  Catch 404 and respond with error message
@@ -73,19 +80,15 @@ app.use((req, res, next) => {
 
 });
 
-
-
 // Catch `next(err)` calls
 app.use((err, req, res, next) => {
   // always log the error
   console.error('ERROR', req.method, req.path, err);
-
   // only render if the error ocurred before sending the response
   if (!res.headersSent) {
     const statusError = err.status || '500';
     res.status(statusError).json(err);
   }
 });
-
 
 module.exports = app;
